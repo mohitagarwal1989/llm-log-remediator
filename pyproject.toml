@@ -1,0 +1,15 @@
+[project]
+name = "llm-log-remediator"
+version = "1.0.0"
+requires-python = ">=3.10"
+
+dependencies = [
+  "python-dotenv",
+  "aiofiles",
+  "sentence-transformers",
+  "chromadb",
+  "gitpython",
+  "PyGithub",
+  "groq",
+  "requests"
+]
