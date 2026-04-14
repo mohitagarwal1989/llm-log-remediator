@@ -46,7 +46,7 @@ async def store_fix_in_kb(exception, fix):
     print("storing fix from llm to error collection")
     clean_fix = extract_fix_only(fix)
     document = f"Exception: {exception}\nFix: {clean_fix}"
-    emb = await embed_text(document)
+    emb = await embed_text(exception)
 
     error_collection.add(
         ids=[f"{exception}_{time.time()}"],
