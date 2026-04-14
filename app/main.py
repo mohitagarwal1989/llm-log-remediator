@@ -9,8 +9,7 @@ async def start():
     REQUIRED_ENV_VARS = [
         "GROQ_API_KEY",
         "GITHUB_TOKEN",
-        "GITHUB_REPO_URL",
-        "GITHUB_LOCAL_PATH",
+        "GITHUB_REPO_URL"
     ]
 
     missing = [v for v in REQUIRED_ENV_VARS if not os.environ.get(v)]

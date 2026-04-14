@@ -11,6 +11,9 @@ async def handle_error(file_path: str, stack_trace: str):
 
     exception = extract_exception_name(stack_trace)
     print("exception name: ", exception)
+    if not exception:
+        print("exception is none or empty")
+        return
     fix = await find_fix_for_error(exception)
     print("fix----", fix)
     if not fix:
