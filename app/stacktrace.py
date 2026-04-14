@@ -8,7 +8,7 @@ JAVA_FILE_REGEX   = re.compile(r'\(([\w$]+\.java):(\d+)')
 EXCEPTION_REGEX = re.compile(r'([\w\.]+Exception|[\w]+Error)')
 
 def extract_exception_name(line):
-    m = EXCEPTION_REGEX.search(line)
+    m = EXCEPTION_REGEX.search(line) or line.strip()
     return m.group(1) if m else None
 
 def is_stack_start(line: str) -> bool:

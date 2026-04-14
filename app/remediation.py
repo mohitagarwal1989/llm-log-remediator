@@ -9,32 +9,39 @@ async def handle_error(file_path: str, stack_trace: str):
     print("⚠ Exception detected:\n", stack_trace)
     print("file path: ", file_path)
 
-    exception = extract_exception_name(stack_trace) or line.strip()
+    exception = extract_exception_name(stack_trace)
     print("exception name: ", exception)
     fix = await find_fix_for_error(exception)
+    print("fix----", fix)
     if not fix:
         llm_fix = await get_fix_from_llm(stack_trace)
         await store_fix_in_kb(exception, llm_fix)
         fix = extract_fix_only(llm_fix)
 
     java_files = extract_java_files_from_stacktrace(stack_trace)
-    print("files", java_files)
+    print("files from stacktrace", java_files)
     if not java_files:
         print("❌ No Java files found in stack trace")
         return
 
     repo_files = find_java_files_in_repo(GITHUB_LOCAL_PATH, java_files)
+    print("files from repo", repo_files)
     if not repo_files:
         print("❌ Java files not found in repo")
         return
 
+    changes_made = False       
+
     for rel_path, content in repo_files.items():
         updated = await get_updated_java_file(rel_path, content, fix)
 
-        full_path = os.path.join(GITHUB_LOCAL_PATH, rel_path)
-        with open(full_path, "w", encoding="utf-8") as f:
-            f.write(updated)
+        if updated != content:
+            full_path = os.path.join(GITHUB_LOCAL_PATH, rel_path)
+            with open(full_path, "w", encoding="utf-8") as f:
+                f.write(updated)
+            changes_made = True
 
     exception_name = stack_trace.splitlines()[0]
-    apply_changes_and_raise_pr(exception_name)
-    await store_exception_log(file_path, exception)
+    if changes_made:
+        apply_changes_and_raise_pr(exception_name)
+        await store_exception_log(file_path, exception)

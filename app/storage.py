@@ -3,10 +3,16 @@ import chromadb
 from app.model import embed_text
 
 log_client = chromadb.PersistentClient(path="log_chroma_db")
-logs_collection = log_client.get_or_create_collection("log_exceptions")
+logs_collection = log_client.get_or_create_collection(
+    name="log_exceptions",
+    metadata={"hnsw:space": "cosine"}
+)
 
 kb_client = chromadb.PersistentClient(path="error_knowledge_db")
-error_collection = kb_client.get_or_create_collection("error_kb")
+error_collection = kb_client.get_or_create_collection(
+    name="error_knowledge_base",
+    metadata={"hnsw:space": "cosine"}
+)
 
 async def store_exception_log(file_path, exception):
     emb = await embed_text(exception)
@@ -27,9 +33,11 @@ async def find_fix_for_error(text):
     )
 
     if not result["metadatas"] or not result["metadatas"][0]:
+        print("result not found in db")
         return None
 
     if result["distances"][0][0] > 0.45:
+        print("result not found in db due to distance")
         return None
 
     return result["metadatas"][0][0]["fix"]

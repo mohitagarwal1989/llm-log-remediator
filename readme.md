@@ -10,4 +10,5 @@ Fully automated system that:
 ## Run
 ```bash
 pip install pyproject.toml
-python -m app.main
+python run.py
+python run_api.py

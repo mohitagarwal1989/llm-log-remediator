@@ -33,6 +33,8 @@ async def get_updated_java_file(
     original_content: str,
     fix: str
 ) -> str:
+
+    print("calling llm to get updated files")
     system_prompt = (
         "You are a Java code editor.\n"
         "You modify existing files.\n"

@@ -18,8 +18,16 @@ def apply_changes_and_raise_pr(exception: str):
     print("apply changes")
     branch = f"llm-fix/{uuid.uuid4().hex[:8]}"
 
+    
+# --- SAFETY: ensure clean working tree ---
+    #repo.git.fetch("origin")
+
     repo.git.checkout(GITHUB_BASE_BRANCH)
     repo.git.pull("origin", GITHUB_BASE_BRANCH)
+    
+    #repo.git.reset("--hard", f"origin/{GITHUB_BASE_BRANCH}")
+    #repo.git.clean("-fd")  # remove untracked files/directories
+
     repo.git.checkout("-b", branch)
 
     # Git produces authoritative diff
