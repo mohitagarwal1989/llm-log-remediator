@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 log_offsets.json
 .chroma/
+error_knowledge_db
+log_chroma_db
