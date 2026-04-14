@@ -2,7 +2,7 @@ import os
 from app.stacktrace import extract_exception_name, extract_java_files_from_stacktrace
 from app.storage import find_fix_for_error, store_fix_in_kb, store_exception_log, extract_fix_only
 from app.llm_fix import get_fix_from_llm, get_updated_java_file
-from app.repo_ops import apply_changes_and_raise_pr, find_java_files_in_repo
+from app.repo_ops import apply_changes_and_raise_pr, find_java_files_in_repo, prepare_repo_clean_state
 from app.config import GITHUB_LOCAL_PATH
 
 async def handle_error(file_path: str, stack_trace: str):
@@ -34,7 +34,7 @@ async def handle_error(file_path: str, stack_trace: str):
         return
 
     changes_made = False       
-
+    prepare_repo_clean_state()
     for rel_path, content in repo_files.items():
         updated = await get_updated_java_file(rel_path, content, fix)
 

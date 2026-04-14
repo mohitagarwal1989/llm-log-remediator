@@ -16,6 +16,13 @@ def load_github_repo():
         repo = Repo(GITHUB_LOCAL_PATH)
     print("repo", repo)
 
+def prepare_repo_clean_state():
+    print("cleaning repo")
+    repo.git.fetch("origin")
+    repo.git.checkout(GITHUB_BASE_BRANCH)
+    repo.git.reset("--hard", f"origin/{GITHUB_BASE_BRANCH}")
+    repo.git.clean("-fdx")
+
 def apply_changes_and_raise_pr(exception: str):
     print("apply changes")
     branch = f"llm-fix/{uuid.uuid4().hex[:8]}"
