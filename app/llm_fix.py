@@ -16,12 +16,6 @@ Exception stack trace:
 
 Explain the root cause and propose a fix.
 
-IMPORTANT RULES:
-- If multiple fixes are possible, choose the simplest and lowest-risk fix and discard the others silently.
-- Do NOT mention alternative fixes.
-- Do NOT include code blocks.
-- Keep the response concise and clear.
-
 Respond ONLY with the Fix (concise, no code block).
 """
     resp = client.chat.completions.create(

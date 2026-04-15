@@ -28,7 +28,6 @@ async def handle_error(file_path: str, stack_trace: str):
         return
 
     repo_files = find_java_files_in_repo(GITHUB_LOCAL_PATH, java_files)
-    print("files from repo", repo_files)
     if not repo_files:
         print("❌ Java files not found in repo")
         return
