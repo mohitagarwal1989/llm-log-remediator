@@ -24,23 +24,39 @@ async def store_exception_log(file_path, exception):
     )
 
 async def find_fix_for_error(text):
-    print("finding fix from error collection for ", text)
+    print("finding fix from error collection for", text)
+
     emb = await embed_text(text)
+
     result = error_collection.query(
         query_embeddings=emb,
         n_results=1,
         include=["metadatas", "distances"]
     )
 
-    if not result["metadatas"] or not result["metadatas"][0]:
-        print("result not found in db")
+    print("---", result)
+
+    if not result:
+        print("No result returned")
         return None
 
-    if result["distances"][0][0] > 0.45:
-        print("result not found in db due to distance")
+    metadatas = result.get("metadatas", [])
+    distances = result.get("distances", [])
+
+    if not metadatas or not metadatas[0] or not metadatas[0][0]:
+        print("No metadata match found")
         return None
 
-    return result["metadatas"][0][0]["fix"]
+    if not distances or not distances[0] or not distances[0][0]:
+        print("No distance info found")
+        return None
+
+    if distances[0][0] > 0.45:
+        print("Match rejected due to distance:", distances[0][0])
+        return None
+
+    return metadatas[0][0].get("fix")
+
 
 async def store_fix_in_kb(exception, fix):
     print("storing fix from llm to error collection")
