@@ -11,6 +11,7 @@ GITHUB_BASE_BRANCH = os.environ.get("GITHUB_BASE_BRANCH", "master")
 
 LOG_FOLDERS = os.environ.get("LOG_FOLDERS", "").split(",")
 SCAN_INTERVAL = int(os.environ.get("SCAN_INTERVAL", 60))
+LLM_CONFIDENCE_THRESHOLD = 0.8
 
 OFFSET_FILE = "log_offsets.json"
 

@@ -71,7 +71,7 @@ Stop collecting lines for the current exception when:
 
 ## Run
 ```bash
-pip install pyproject.toml
+pip install -e .
 python run.py
 python run_api.py
 

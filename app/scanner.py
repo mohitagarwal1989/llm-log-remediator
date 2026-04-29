@@ -19,7 +19,16 @@ def save_offsets():
         json.dump(file_offsets, f)
 
 async def scan_file(file_path: str):
+    current_size = os.path.getsize(file_path)
     last_offset = file_offsets.get(file_path, 0)
+
+    
+# ✅ Reset offset if file was truncated or replaced
+    if last_offset > current_size:
+        last_offset = 0
+        file_offsets[file_path] = 0
+        save_offsets()
+
 
     async with aiofiles.open(file_path, "r", errors="ignore") as f:
         await f.seek(last_offset)

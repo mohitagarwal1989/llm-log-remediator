@@ -3,7 +3,7 @@ from app.stacktrace import extract_exception_name, extract_java_files_from_stack
 from app.storage import find_fix_for_error, store_fix_in_kb, store_exception_log, extract_fix_only
 from app.llm_fix import get_fix_from_llm, get_updated_java_file
 from app.repo_ops import apply_changes_and_raise_pr, find_java_files_in_repo, prepare_repo_clean_state
-from app.config import GITHUB_LOCAL_PATH
+from app.config import GITHUB_LOCAL_PATH, LLM_CONFIDENCE_THRESHOLD
 
 async def handle_error(file_path: str, stack_trace: str):
     print("⚠ Exception detected:\n", stack_trace)
@@ -14,13 +14,8 @@ async def handle_error(file_path: str, stack_trace: str):
     if not exception:
         print("exception is none or empty")
         return
-    fix = await find_fix_for_error(exception)
-    print("fix----", fix)
-    if not fix:
-        llm_fix = await get_fix_from_llm(stack_trace)
-        await store_fix_in_kb(exception, llm_fix)
-        fix = extract_fix_only(llm_fix)
 
+        
     java_files = extract_java_files_from_stacktrace(stack_trace)
     print("files from stacktrace", java_files)
     if not java_files:
@@ -31,6 +26,15 @@ async def handle_error(file_path: str, stack_trace: str):
     if not repo_files:
         print("❌ Java files not found in repo")
         return
+    fix = await find_fix_for_error(exception)
+    print("fix----", fix)
+    if not fix:
+        llm_fix, confidence = await get_fix_from_llm(stack_trace, repo_files)
+        if confidence < LLM_CONFIDENCE_THRESHOLD:
+            print("fix confidence is less than threshold")
+            return
+        await store_fix_in_kb(exception, llm_fix)
+        fix = extract_fix_only(llm_fix)
 
     changes_made = False       
     prepare_repo_clean_state()
@@ -46,4 +50,4 @@ async def handle_error(file_path: str, stack_trace: str):
     exception_name = stack_trace.splitlines()[0]
     if changes_made:
         apply_changes_and_raise_pr(exception_name)
-        await store_exception_log(file_path, exception)
+        await store_exception_log(file_path, exception)        
