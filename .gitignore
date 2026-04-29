@@ -2,5 +2,6 @@ __pycache__/
 *.pyc
 log_offsets.json
 .chroma/
-error_knowledge_db
-log_chroma_db
+error_knowledge_db/**
+log_chroma_db/**
+llm_log_remediator.egg-info/**
